@@ -901,18 +901,27 @@ tr:hover td { background: var(--bg-card); }
       <div class="page-subtitle" id="pageSubtitle">Create a new project to get started</div>
     </div>
     <div class="page-actions">
-      <button class="btn btn-secondary" onclick="toggleAllSections()" id="btn-collapse-all" data-testid="btn-collapse-all" style="margin-right:8px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="4,8 12,16 20,8"/></svg>
-        Collapse All
-      </button>
-      <button class="btn btn-secondary" onclick="openProposalModal()" id="btn-export-proposal" style="margin-right:4px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><path d="M12 18v-6M9 15l3 3 3-3"/></svg>
-        Export Proposal
-      </button>
-      <button class="btn btn-primary" onclick="openWizard()" data-testid="btn-new-project">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        New Project
-      </button>
+  <button class="btn btn-secondary" onclick="toggleAllSections()" id="btn-collapse-all" data-testid="btn-collapse-all">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="4,16 12,8 20,16"/></svg> Collapse All
+  </button>
+
+  <button class="btn btn-secondary" onclick="clearCurrentProject()" id="btn-clear-project">
+    Clear Project
+  </button>
+  <button class="btn btn-secondary" onclick="archiveCurrentProject()" id="btn-archive-project">
+    Archive Project
+  </button>
+  <button class="btn btn-danger" onclick="deleteCurrentProject()" id="btn-delete-project">
+    Delete Project
+  </button>
+
+  <button class="btn btn-secondary" onclick="openProposalModal()" id="btn-export-proposal" style="margin-right:4px;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Export Proposal
+  </button>
+  <button class="btn btn-primary" onclick="openNewWizard()" data-testid="btn-new-project">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> New Project
+  </button>
+</div>
     </div>
   </div>
 
