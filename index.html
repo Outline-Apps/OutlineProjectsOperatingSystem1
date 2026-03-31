@@ -911,9 +911,9 @@ tr:hover td { background: var(--bg-card); }
   <button class="btn btn-secondary" onclick="archiveCurrentProject()" id="btn-archive-project">
     Archive Project
   </button>
-  <button class="btn btn-danger" onclick="deleteCurrentProject()" id="btn-delete-project">
-    Delete Project
-  </button>
+ <button class="btn btn-delete" onclick="deleteCurrentProject()" id="btn-delete-project">
+  Delete Project
+</button>
 
   <button class="btn btn-secondary" onclick="openProposalModal()" id="btn-export-proposal" style="margin-right:4px;">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Export Proposal
@@ -1241,7 +1241,90 @@ function renderPageHeader() {
   parts.push(fmt(proj.contractValueIncl, proj.currency) + ' incl. GST');
   document.getElementById('pageSubtitle').textContent = parts.join(' · ');
 }
+function clearCurrentProject() {
+  if (!confirm('Clear all data for this project (keep the structure)?')) return;
 
+  const proj = getCurrentProject();
+  if (!proj) return;
+
+  if (proj.scopeGroups) {
+    proj.scopeGroups.forEach(group => {
+      if (!group.items) return;
+      group.items.forEach(item => {
+        if ('qty' in item) item.qty = '';
+        if ('unit' in item) item.unit = '';
+        if ('notes' in item) item.notes = '';
+        if ('rate' in item) item.rate = '';
+        if ('total' in item) item.total = '';
+      });
+    });
+  }
+
+  if (proj.manningProfile && proj.manningProfile.phases) {
+    proj.manningProfile.phases.forEach(phase => {
+      if (!phase.tasks) return;
+      phase.tasks.forEach(task => {
+        if (Array.isArray(task.resourcesPerDay)) {
+          task.resourcesPerDay = task.resourcesPerDay.map(() => 0);
+        }
+        if ('hoursSpent' in task) task.hoursSpent = 0;
+      });
+    });
+  }
+
+  saveAppState();
+  renderDashboard();
+}
+
+function archiveCurrentProject() {
+  const proj = getCurrentProject();
+  if (!proj) return;
+
+  const name = prompt(
+    'Name this archive snapshot:',
+    (proj.code || proj.name || 'Project') + ' – ' + new Date().toLocaleString()
+  );
+  if (!name) return;
+
+  const key = 'outline-os-archive-' + name;
+  try {
+    localStorage.setItem(key, JSON.stringify(proj));
+    alert('Project archived locally as: ' + name);
+  } catch (e) {
+    alert('Could not archive project (localStorage full or blocked).');
+  }
+}
+
+function deleteCurrentProject() {
+  if (!confirm('Delete this project and all its data? This cannot be undone unless you exported/archived it.')) return;
+
+  const proj = getCurrentProject();
+  if (!proj) return;
+
+  AppState.projects = AppState.projects.filter(p => p.id !== proj.id);
+
+  if (AppState.projects.length) {
+    AppState.activeProjectId = AppState.projects[0].id;
+  } else {
+    AppState.activeProjectId = null;
+
+    const titleEl = document.getElementById('pageTitle');
+    const subEl = document.getElementById('pageSubtitle');
+    if (titleEl) titleEl.textContent = 'No Project Selected';
+    if (subEl) subEl.textContent = 'Create a new project to get started';
+
+    const dash = document.getElementById('dashboardContent');
+    if (dash) dash.innerHTML = '';
+  }
+
+  saveAppState();
+  renderProjectSelector();
+
+  if (AppState.activeProjectId) {
+    renderPageHeader();
+    renderDashboard();
+  }
+}
 function renderDashboard() {
   const proj = getCurrentProject();
   if (!proj) return;
